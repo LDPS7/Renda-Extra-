@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>RENDA EXTRA</title>
+    <meta name="theme-color" content="#0b1424">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" as="style">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --blue-dark: #0b1424;
+            --blue-accent: #3b98ff;
+            --blue-light: #79c0ff;
+            --blue-pale: #b8dcff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        #particle-canvas {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 5;
+        }
+
+        body {
+            font-family: 'Rajdhani', 'Segoe UI', system-ui, sans-serif;
+            background: var(--blue-dark);
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            position: relative; overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            cursor: default;
+        }
+
+        @media (max-width: 680px) { body { cursor: auto; } }
+
+        .mining-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1621761191319-c6fb62004040?q=80&w=1200&auto=format&fit=crop');
+            background-size: cover; background-position: center 25%;
+            filter: brightness(0.4) saturate(1.3); z-index: 0;
+        }
+
+        .bg-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 30% 40%, rgba(8,28,55,0.7), rgba(2,12,28,0.9));
+            z-index: 1;
+        }
+
+        /* LIVE BAR */
+        .live-bar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(0,10,25,0.85);
+            border-bottom: 1px solid rgba(59,152,255,0.3);
+            display: flex; align-items: center; justify-content: center;
+            gap: 2rem; padding: 0.4rem 1rem;
+            font-family: 'Space Mono', monospace; font-size: 0.75rem;
+            color: var(--blue-light);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+        }
+
+        .live-dot {
+            width: 7px; height: 7px; background: #00ff88;
+            border-radius: 50%; display: inline-block; margin-right: 5px;
+            animation: pulse-dot 1.5s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%,100% { opacity:1; transform:scale(1); }
+            50% { opacity:0.4; transform:scale(0.8); }
+        }
+
+        .live-stat { display: flex; align-items: center; gap: 5px; }
+        .live-stat span { color: #00ff88; font-weight: 700; }
+
+        /* TOASTS */
+        .toast-container {
+            position: fixed; bottom: 1.5rem; left: 1rem;
+            z-index: 200; display: flex; flex-direction: column;
+            gap: 0.5rem; pointer-events: none;
+        }
+
+        .toast {
+            background: rgba(5,20,45,0.92);
+            border: 1px solid rgba(59,152,255,0.4); border-radius: 12px;
+            padding: 10px 14px; color: var(--blue-pale);
+            font-size: 0.8rem; display: flex; align-items: center; gap: 10px;
+            transform: translateX(-120%); opacity: 0;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+            max-width: 260px;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+
+        .toast.show { transform: translateX(0); opacity: 1; }
+        .toast-icon { font-size: 1.1rem; }
+        .toast-text strong { color: #00ff88; }
+
+        /* TRACKER PANEL */
+        .tracker-panel {
+            position: fixed; top: 50%; right: 1rem; transform: translateY(-50%);
+            z-index: 100; background: rgba(5,15,35,0.9);
+            border: 1px solid rgba(59,152,255,0.3); border-radius: 16px;
+            padding: 1rem; min-width: 160px; display: none;
+        }
+
+        @media (min-width: 1200px) { .tracker-panel { display: block; } }
+
+        .tracker-title {
+            font-family: 'Space Mono', monospace; font-size: 0.6rem;
+            color: var(--blue-accent); letter-spacing: 2px;
+            text-transform: uppercase; margin-bottom: 0.6rem; text-align: center;
+        }
+
+        .tracker-list { display: flex; flex-direction: column; gap: 4px; }
+
+        .tracker-item {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.75rem; color: var(--blue-pale);
+            padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .tracker-count {
+            background: rgba(59,152,255,0.2); border-radius: 20px;
+            padding: 1px 7px; font-size: 0.65rem; color: var(--blue-light);
+            font-family: 'Space Mono', monospace;
+        }
+
+        /* MAIN */
+        .main-content {
+            position: relative; z-index: 15; flex: 1;
+            display: flex; flex-direction: column; align-items: center;
+            padding: 5rem 1rem 3rem; width: 100%;
+            max-width: 1400px; margin: 0 auto;
+        }
+
+        .page-header { text-align: center; margin-bottom: 2.5rem; width: 100%; }
+
+        .page-header h1 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: clamp(2.4rem, 8vw, 5rem);
+            font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+            background: linear-gradient(135deg, #ffffff, #79c0ff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 10px rgba(59,152,255,0.5);
+        }
+
+        .page-header p {
+            color: #ffffff;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            opacity: 1;
+            text-shadow: 0 0 5px rgba(255,255,255,0.3);
+        }
+
+        /* GRID */
+        .mining-grid {
+            display: flex; flex-wrap: wrap; justify-content: center;
+            gap: 1.8rem 1.2rem; width: 100%;
+        }
+
+        .phone-card {
+            flex: 0 1 280px; min-width: 260px; width: 100%; max-width: 320px;
+            display: flex; flex-direction: column; align-items: center;
+            transition: transform 0.25s ease;
+            cursor: default; position: relative;
+            -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
+        }
+
+        @media (max-width: 680px) { .phone-card { cursor: pointer; } }
+
+        .phone-card:active { transform: scale(0.98); transition: transform 0.1s; }
+
+        /* Número do quadrado */
+        .card-number {
+            position: absolute; top: 14px; left: 16px;
+            font-family: 'Space Mono', monospace; font-size: 0.9rem;
+            color: #00ff88; background: rgba(0,10,20,0.7);
+            border: 1px solid rgba(0,255,136,0.5); border-radius: 8px;
+            padding: 2px 8px; z-index: 3; pointer-events: none;
+            letter-spacing: 0px; font-weight: 700;
+        }
+
+        .phone-mock {
+            width: 100%; background: rgba(8,25,45,0.75);
+            border: 1.8px solid rgba(70,150,255,0.25); border-radius: 38px;
+            padding: 22px 12px 18px 12px;
+            box-shadow: 0 25px 40px -15px #001a33, inset 0 0 0 1px rgba(255,255,255,0.05);
+            transition: border-color 0.2s, box-shadow 0.3s;
+        }
+
+        @supports (backdrop-filter: blur(14px)) {
+            .phone-mock {
+                background: rgba(8,25,45,0.3);
+                backdrop-filter: blur(14px) saturate(180%);
+                -webkit-backdrop-filter: blur(14px) saturate(180%);
+            }
+        }
+
+        .phone-card:hover .phone-mock {
+            border-color: #3b98ff;
+            box-shadow: 0 30px 50px -12px #004a99, 0 0 0 2px rgba(0,160,255,0.4);
+        }
+
+        .phone-notch {
+            width: 100px; height: 25px; background: rgba(0,0,0,0.3);
+            border-radius: 30px; margin: -12px auto 14px auto;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .phone-screen {
+            background: rgba(0,10,25,0.2); border-radius: 24px;
+            padding: 18px 8px; display: flex; flex-direction: column;
+            align-items: center; gap: 10px;
+        }
+
+        /* Imagem da plataforma - imagens personalizadas */
+        .miner-img {
+            width: 88px; height: 88px; margin: 0 auto;
+            border-radius: 20px; object-fit: cover;
+            filter: drop-shadow(0 0 14px rgba(100,180,255,0.6));
+            transition: transform 0.3s ease, filter 0.3s;
+            animation: floatCloud 4s infinite ease-in-out;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(59,152,255,0.3);
+        }
+
+        .phone-card:hover .miner-img {
+            transform: scale(1.08);
+            filter: drop-shadow(0 0 22px #3b98ff);
+        }
+
+        @keyframes floatCloud {
+            0%   { transform: translateY(0px); }
+            50%  { transform: translateY(-6px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .miner-name {
+            font-size: 1.55rem; font-weight: 700; text-align: center;
+            background: linear-gradient(to right, #ffffff, #b3dbff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            letter-spacing: 0.02em; margin: 4px 0 2px; line-height: 1.2;
+            font-family: 'Rajdhani', sans-serif; text-transform: uppercase;
+        }
+
+        .miner-sub {
+            font-size: 0.7rem; color: #9bbdf0;
+            text-transform: uppercase; letter-spacing: 2px; font-family: 'Space Mono', monospace;
+        }
+
+        /* BOTÕES */
+        .btn-wrap { width: 100%; margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+
+        .mining-btn {
+            display: inline-block; width: 100%; padding: 14px 10px;
+            background: rgba(0,40,75,0.5); border: 1px solid rgba(0,170,255,0.5);
+            border-radius: 60px; color: white; font-weight: 700; font-size: 1.05rem;
+            text-align: center; text-decoration: none; letter-spacing: 1px;
+            transition: all 0.25s ease; box-shadow: 0 8px 22px -8px #002d5a;
+            position: relative; overflow: hidden;
+            -webkit-tap-highlight-color: transparent; cursor: default;
+            font-family: 'Rajdhani', sans-serif; text-transform: uppercase;
+        }
+
+        @media (max-width: 680px) { .mining-btn { cursor: pointer; } }
+
+        .mining-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%;
+            width: 60%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transition: left 0.5s;
+        }
+
+        .mining-btn:hover {
+            background: rgba(0,90,180,0.75); border-color: #7ac4ff;
+            box-shadow: 0 12px 30px -5px #0066cc, 0 0 18px #0088ff;
+            transform: scale(1.02);
+        }
+
+        .mining-btn:hover::before { left: 150%; }
+        .mining-btn:active { transform: scale(0.98); background: rgba(0,70,150,0.9); }
+
+        .compare-btn {
+            display: inline-block; width: 100%; padding: 8px 10px;
+            background: transparent; border: 1px solid rgba(59,152,255,0.25);
+            border-radius: 60px; color: var(--blue-light); font-size: 0.78rem;
+            text-align: center; text-decoration: none; letter-spacing: 0.5px;
+            transition: all 0.2s; cursor: default; font-family: 'Space Mono', monospace;
+        }
+
+        @media (max-width: 680px) { .compare-btn { cursor: pointer; } }
+
+        .compare-btn:hover { background: rgba(59,152,255,0.1); border-color: rgba(59,152,255,0.5); }
+
+        /* RESPONSIVE */
+        @media (max-width: 680px) {
+            .main-content { padding: 4.5rem 0.8rem 2rem; }
+            .phone-card { flex: 0 1 300px; max-width: 300px; }
+            .miner-img { width: 72px; height: 72px; }
+            .miner-name { font-size: 1.4rem; }
+            .live-bar { font-size: 0.7rem; gap: 1rem; }
+        }
+
+        @media (max-width: 380px) { .phone-card { min-width: 240px; } }
+
+        /* MODAL */
+        #compareModal {
+            display: none; position: fixed; inset: 0; z-index: 300;
+            align-items: center; justify-content: center;
+            background: rgba(0,5,15,0.85);
+            backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+        }
+
+        .modal-box {
+            background: rgba(5,20,50,0.97); border: 1px solid rgba(59,152,255,0.4);
+            border-radius: 24px; padding: 2rem; max-width: 340px;
+            width: 90%; position: relative;
+        }
+
+        .modal-close {
+            position: absolute; top: 12px; right: 16px;
+            background: none; border: none; color: #79c0ff;
+            font-size: 1.4rem; cursor: pointer;
+        }
+
+        .modal-title {
+            font-family: 'Space Mono', monospace; font-size: 0.65rem;
+            color: var(--blue-accent); letter-spacing: 2px;
+            text-transform: uppercase; margin-bottom: 1rem;
+        }
+
+        .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+
+        .compare-cell {
+            background: rgba(59,152,255,0.1); border-radius: 10px;
+            padding: 0.7rem; text-align: center;
+        }
+
+        .compare-cell-label { font-size: 0.65rem; color: #9bbdf0; margin-bottom: 4px; }
+        .compare-cell-val { font-size: 1.3rem; color: #00ff88; font-weight: 700; }
+        .compare-cell-val.blue { color: #79c0ff; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+    <div class="mining-bg"></div>
+    <div class="bg-overlay"></div>
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="live-bar">
+        <div class="live-stat"><span class="live-dot"></span><span id="liveCount">—</span> acessando agora</div>
+        <div class="live-stat">💰 <span id="liveEarned">—</span> ganhos hoje</div>
+        <div class="live-stat">🔗 <span id="liveClicks">—</span> cliques hoje</div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="tracker-panel" id="trackerPanel">
+        <div class="tracker-title">📊 Cliques</div>
+        <div class="tracker-list" id="trackerList"></div>
+    </div>
+
+    <div id="compareModal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="document.getElementById('compareModal').style.display='none'">✕</button>
+            <div class="modal-title">📊 Comparativo de Ganhos</div>
+            <div id="compareContent"></div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1>RENDA EXTRA</h1>
+            <p>As melhores plataformas para ganhar dinheiro online</p>
+        </div>
+
+        <div class="mining-grid">
+
+            <!-- Earnably -->
+            <div class="phone-card">
+                <span class="card-number">1</span>
+                <div class="phone-mock">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <img class="miner-img" loading="lazy" decoding="async" src="https://img.icons8.com/?size=100&id=11187&format=png&color=3b98ff" alt="Earnably">
+                        <div class="miner-name">Earnably</div>
+                        <div class="miner-sub">pesquisas e ofertas</div>
+                    </div>
+                </div>
+                <div class="btn-wrap">
+                    <a href="https://earnably.com/join/1957789" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar Earnably" onclick="trackClick('Earnably')">▶ acessar</a>
+                    <span class="compare-btn" onclick="showCompare('Earnably','8.5%','USD','Média')">📊 comparar ganhos</span>
+                </div>
+            </div>
+
+            <!-- TeraBox -->
+            <div class="phone-card">
+                <span class="card-number">2</span>
+                <div class="phone-mock">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <img class="miner-img" loading="lazy" decoding="async" src="https://img.icons8.com/?size=100&id=11683&format=png&color=3b98ff" alt="TeraBox">
+                        <div class="miner-name">TeraBox</div>
+                        <div class="miner-sub">armazenamento em nuvem</div>
+                    </div>
+                </div>
+                <div class="btn-wrap">
+                    <a href="https://www.terabox.com/portuguese/webmaster?referer_uk=4401664863395" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar TeraBox" onclick="trackClick('TeraBox')">▶ acessar</a>
+                    <span class="compare-btn" onclick="showCompare('TeraBox','7.2%','USD','Baixa')">📊 comparar ganhos</span>
+                </div>
+            </div>
+
+            <!-- Encurta.net -->
+            <div class="phone-card">
+                <span class="card-number">3</span>
+                <div class="phone-mock">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <img class="miner-img" loading="lazy" decoding="async" src="https://img.icons8.com/?size=100&id=82749&format=png&color=3b98ff" alt="Encurta.net">
+                        <div class="miner-name">Encurta.net</div>
+                        <div class="miner-sub">encurtador de links</div>
+                    </div>
+                </div>
+                <div class="btn-wrap">
+                    <a href="https://encurta.net/ref/lucianosantos7191" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar Encurta.net" onclick="trackClick('Encurta.net')">▶ acessar</a>
+                    <span class="compare-btn" onclick="showCompare('Encurta.net','6.8%','USD','Média')">📊 comparar ganhos</span>
+                </div>
+            </div>
+
+            <!-- Honeygain -->
+            <div class="phone-card">
+                <span class="card-number">4</span>
+                <div class="phone-mock">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <img class="miner-img" loading="lazy" decoding="async" src="https://img.icons8.com/?size=100&id=87222&format=png&color=3b98ff" alt="Honeygain">
+                        <div class="miner-name">Honeygain</div>
+                        <div class="miner-sub">compartilhe internet</div>
+                    </div>
+                </div>
+                <div class="btn-wrap">
+                    <a href="https://join.honeygain.com/LDPSP008F5" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar Honeygain" onclick="trackClick('Honeygain')">▶ acessar</a>
+                    <span class="compare-btn" onclick="showCompare('Honeygain','9.1%','USD','Alta')">📊 comparar ganhos</span>
+                </div>
+            </div>
+
+            <!-- Timebucks -->
+            <div class="phone-card">
+                <span class="card-number">5</span>
+                <div class="phone-mock">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <img class="miner-img" loading="lazy" decoding="async" src="https://img.icons8.com/?size=100&id=11113&format=png&color=3b98ff" alt="Timebucks">
+                        <div class="miner-name">Timebucks</div>
+                        <div class="miner-sub">tarefas e vídeos</div>
+                    </div>
+                </div>
+                <div class="btn-wrap">
+                    <a href="https://timebucks.com/?refID=219263145" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar Timebucks" onclick="trackClick('Timebucks')">▶ acessar</a>
+                    <span class="compare-btn" onclick="showCompare('Timebucks','7.5%','USD','Média')">📊 comparar ganhos</span>
+                </div>
+            </div>
+
+            <!-- PrizeRebel -->
+            <div class="phone-card">
+                <span class="card-number">6</span>
+                <div class="phone-mock">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <img class="miner-img" loading="lazy" decoding="async" src="https://img.icons8.com/?size=100&id=9730&format=png&color=3b98ff" alt="PrizeRebel">
+                        <div class="miner-name">PrizeRebel</div>
+                        <div class="miner-sub">pesquisas pagas</div>
+                    </div>
+                </div>
+                <div class="btn-wrap">
+                    <a href="https://www.prizerebel.com/index.php?r=14117164" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar PrizeRebel" onclick="trackClick('PrizeRebel')">▶ acessar</a>
+                    <span class="compare-btn" onclick="showCompare('PrizeRebel','8.2%','USD','Alta')">📊 comparar ganhos</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+    (function () {
+
+        // ===== PWA INLINE =====
+        try {
+            const mBlob = new Blob([JSON.stringify({
+                name:"RENDA EXTRA",short_name:"RENDAEXTRA",start_url:"/",display:"standalone",
+                background_color:"#0b1424",theme_color:"#0b1424",
+                icons:[{src:"icon-192.png",sizes:"192x192",type:"image/png"},{src:"icon-512.png",sizes:"512x512",type:"image/png"}]
+            })],{type:'application/json'});
+            const ml=document.createElement('link');ml.rel='manifest';ml.href=URL.createObjectURL(mBlob);
+            document.head.appendChild(ml);
+        } catch(e){}
+
+        if('serviceWorker' in navigator){
+            try{
+                const sw=`const C='re-v1';self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['/'])));self.skipWaiting();});self.addEventListener('activate',e=>{self.clients.claim();});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)));});`;
+                navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});
+            }catch(e){}
+        }
+
+        // ===== CLICK TRACKER =====
+        const clickData = {};
+        var liveBaseClicks = 423 + Math.floor(Math.random()*100);
+
+        window.trackClick = function(name){
+            clickData[name]=(clickData[name]||0)+1;
+            updateTrackerPanel();
+            const total=Object.values(clickData).reduce((a,b)=>a+b,0);
+            const lc=document.getElementById('liveClicks');
+            if(lc) lc.textContent=liveBaseClicks+total;
+        };
+
+        function updateTrackerPanel(){
+            const list=document.getElementById('trackerList');
+            if(!list) return;
+            list.innerHTML=Object.entries(clickData).sort((a,b)=>b[1]-a[1]).slice(0,8)
+                .map(([n,c])=>`<div class="tracker-item"><span>${n}</span><span class="tracker-count">${c}</span></div>`).join('');
+        }
+
+        // ===== MODAL COMPARAR =====
+        window.showCompare = function(name,rate,coin,volatility){
+            const daily=(parseFloat(rate)/365).toFixed(3);
+            const monthly=(parseFloat(rate)/12).toFixed(2);
+            const vc=volatility==='Alta'?'#ff9966':volatility==='Média'?'#ffcc44':'#44cc88';
+            document.getElementById('compareContent').innerHTML=`
+                <div style="margin-bottom:1rem;font-size:1.2rem;font-weight:700;font-family:'Rajdhani',sans-serif;color:white;text-transform:uppercase;">${name}</div>
+                <div class="compare-grid">
+                    <div class="compare-cell"><div class="compare-cell-label">ANUAL</div><div class="compare-cell-val">${rate}</div></div>
+                    <div class="compare-cell"><div class="compare-cell-label">AO MÊS</div><div class="compare-cell-val">${monthly}%</div></div>
+                    <div class="compare-cell"><div class="compare-cell-label">AO DIA</div><div class="compare-cell-val blue">${daily}%</div></div>
+                    <div class="compare-cell"><div class="compare-cell-label">MOEDA</div><div class="compare-cell-val blue">${coin}</div></div>
+                </div>
+                <div style="margin-top:.8rem;font-size:.75rem;color:#9bbdf0;">Volatilidade: <span style="color:${vc};font-weight:700;">${volatility}</span></div>
+                <div style="margin-top:.4rem;font-size:.68rem;color:rgba(155,189,240,0.5);">* Valores estimados. Rendimentos variáveis.</div>`;
+            document.getElementById('compareModal').style.display='flex';
+        };
+        document.getElementById('compareModal').addEventListener('click',function(e){ if(e.target===this) this.style.display='none'; });
+
+        // ===== LIVE BAR =====
+        const liveCountEl=document.getElementById('liveCount');
+        const liveEarnedEl=document.getElementById('liveEarned');
+        const liveClicksEl=document.getElementById('liveClicks');
+        let liveCount=127 + Math.floor(Math.random()*80);
+        let liveEarned=2150 + Math.floor(Math.random()*400);
+
+        function updateLiveBar(){
+            liveCount+=Math.floor(Math.random()*3)-1;
+            liveCount=Math.max(80,liveCount);
+            if(Math.random()>0.6) liveEarned+=Math.floor(Math.random()*5);
+            if(liveCountEl) liveCountEl.textContent=liveCount;
+            if(liveEarnedEl) liveEarnedEl.textContent=liveEarned.toFixed(1);
+            const t=Object.values(clickData).reduce((a,b)=>a+b,0);
+            if(liveClicksEl) liveClicksEl.textContent=liveBaseClicks+t;
+        }
+        setInterval(updateLiveBar,5000); updateLiveBar();
+
+        // ===== TOASTS =====
+        const names=['Carlos','Maria','João','Ana','Pedro','Luisa','Rafael','Beatriz','Lucas','Fernanda','Diego','Juliana'];
+        const mlist=['Earnably','TeraBox','Encurta.net','Honeygain','Timebucks','PrizeRebel'];
+        const acts=[
+            (n,m)=>`<strong>${n}</strong> ganhou R$ ${(Math.random()*30+5).toFixed(2)} no ${m}`,
+            (n,m)=>`<strong>${n}</strong> começou a usar ${m}`,
+            (n,m)=>`<strong>${n}</strong> indicou um amigo no ${m}`,
+            (n,m)=>`<strong>${n}</strong> recebeu bônus no ${m}`,
+        ];
+        const tc=document.getElementById('toastContainer');
+
+        function showToast(){
+            const n=names[Math.floor(Math.random()*names.length)];
+            const m=mlist[Math.floor(Math.random()*mlist.length)];
+            const a=acts[Math.floor(Math.random()*acts.length)];
+            const t=document.createElement('div');
+            t.className='toast';
+            t.innerHTML=`<span class="toast-icon">💰</span><span class="toast-text">${a(n,m)}</span>`;
+            tc.appendChild(t);
+            requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show')));
+            setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=>t.remove(),450); },4000);
+            while(tc.children.length>2) tc.removeChild(tc.firstChild);
+        }
+        setTimeout(showToast,2000); setInterval(showToast,7000);
+
+        // ===== PARTÍCULAS DE FUNDO =====
+        const canvas=document.getElementById('particle-canvas');
+        const ctx=canvas.getContext('2d');
+        let W,H,particles=[],animId;
+
+        function initP(){
+            const cnt=window.innerWidth<768?15:28;
+            particles=[];
+            for(let i=0;i<cnt;i++) particles.push({
+                x:Math.random()*W,y:Math.random()*H,
+                vx:(Math.random()-.5)*.5,vy:(Math.random()-.2)*.4+.7,
+                size:Math.random()*2.5+.8,history:[],
+                maxH:Math.floor(Math.random()*5)+4,
+                alpha:Math.random()*.5+.2
+            });
+        }
+
+        function resizeC(){
+            W=window.innerWidth;H=window.innerHeight;
+            canvas.width=W;canvas.height=H;initP();
+        }
+
+        function updateP(){
+            for(let p of particles){
+                p.history.push({x:p.x,y:p.y});
+                if(p.history.length>p.maxH) p.history.shift();
+                p.x+=p.vx;p.y+=p.vy;
+                if(p.y>H+25){p.y=-15;p.x=Math.random()*W;p.history=[];}
+                if(p.x<-25) p.x=W+25; if(p.x>W+25) p.x=-25;
+                p.vx+=(Math.random()-.5)*.02;p.vy+=(Math.random()-.3)*.01;
+                p.vx=Math.min(Math.max(p.vx,-.9),.9);
+                p.vy=Math.min(Math.max(p.vy,.2),1.3);
+            }
+        }
+
+        function drawP(){
+            ctx.clearRect(0,0,W,H);
+            for(let p of particles){
+                if(p.history.length>1){
+                    for(let i=0;i<p.history.length-1;i++){
+                        const s=p.history[i],n=p.history[i+1];
+                        ctx.beginPath();ctx.moveTo(s.x,s.y);ctx.lineTo(n.x,n.y);
+                        ctx.strokeStyle=`rgba(110,180,255,${(i/p.history.length)*.35*p.alpha})`;
+                        ctx.lineWidth=p.size*(i/p.history.length)*1.4;ctx.stroke();
+                    }
+                }
+                ctx.beginPath();ctx.arc(p.x,p.y,p.size*1.2,0,Math.PI*2);
+                ctx.fillStyle=`rgba(190,225,255,${p.alpha+.25})`;ctx.fill();
+                ctx.beginPath();ctx.arc(p.x,p.y,p.size*.6,0,Math.PI*2);
+                ctx.fillStyle='rgba(255,255,255,.9)';ctx.fill();
+            }
+        }
+
+        function animate(){ updateP();drawP();animId=requestAnimationFrame(animate); }
+        document.addEventListener('visibilitychange',()=>{ if(document.hidden) cancelAnimationFrame(animId); else animate(); });
+        window.addEventListener('resize',resizeC);
+        resizeC();animate();
+
+        // ===== TRAIL SIMPLES: CAUDA LEVE + PARTÍCULAS QUE SOMEM =====
+        const tCanvas=document.createElement('canvas');
+        tCanvas.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;';
+        document.body.appendChild(tCanvas);
+        const tCtx=tCanvas.getContext('2d');
+
+        function resizeT(){ tCanvas.width=window.innerWidth;tCanvas.height=window.innerHeight; }
+        window.addEventListener('resize',resizeT);resizeT();
+
+        // Partículas que somem
+        const dots=[];
+        let lastMx=0,lastMy=0;
+
+        function spawnDots(x,y){
+            const n=2+Math.floor(Math.random()*3);
+            for(let i=0;i<n;i++){
+                dots.push({
+                    x,y,
+                    vx:(Math.random()-.5)*1.4,
+                    vy:(Math.random()-.5)*1.4,
+                    r:Math.random()*1.2+0.4,
+                    life:1,
+                    decay:0.10+Math.random()*0.08,
+                });
+            }
+            if(dots.length>70) dots.splice(0,dots.length-70);
+        }
+
+        function trailLoop(){
+            tCtx.clearRect(0,0,tCanvas.width,tCanvas.height);
+
+            // Atualiza e desenha partículas
+            for(let i=dots.length-1;i>=0;i--){
+                const d=dots[i];
+                d.x+=d.vx; d.y+=d.vy;
+                d.life-=d.decay;
+                if(d.life<=0){ dots.splice(i,1); continue; }
+                tCtx.globalAlpha=d.life*0.85;
+                tCtx.beginPath();
+                tCtx.arc(d.x,d.y,d.r,0,Math.PI*2);
+                tCtx.fillStyle='#00ff88';
+                tCtx.fill();
+            }
+            tCtx.globalAlpha=1;
+            requestAnimationFrame(trailLoop);
+        }
+        trailLoop();
+
+        // Mouse: spawna dots ao mover
+        document.addEventListener('mousemove',(e)=>{
+            const dist=Math.hypot(e.clientX-lastMx,e.clientY-lastMy);
+            if(dist<1) return;
+            lastMx=e.clientX;lastMy=e.clientY;
+            spawnDots(e.clientX,e.clientY);
+            // Influência nas partículas de fundo
+            for(let p of particles){
+                if(Math.random()>.97){ p.vx+=dist*.0008; p.vy+=dist*.0004; }
+            }
+        });
+
+        // Touch
+        document.addEventListener('touchmove',(e)=>{
+            if(!e.touches[0]) return;
+            const tx=e.touches[0].clientX,ty=e.touches[0].clientY;
+            const dist=Math.hypot(tx-lastMx,ty-lastMy);
+            if(dist<3) return;
+            lastMx=tx;lastMy=ty;
+            spawnDots(tx,ty);
+        },{passive:true});
+
+        document.addEventListener('touchend',()=>{ dots.length=0; });
+        document.addEventListener('touchcancel',()=>{ dots.length=0; });
+
+    })();
+    </script>
+</body>
+</html>
