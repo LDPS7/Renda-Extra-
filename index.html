@@ -52,55 +52,6 @@
             z-index: 1;
         }
 
-        /* LIVE BAR */
-        .live-bar {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-            background: rgba(0,10,25,0.85);
-            border-bottom: 1px solid rgba(59,152,255,0.3);
-            display: flex; align-items: center; justify-content: center;
-            gap: 2rem; padding: 0.4rem 1rem;
-            font-family: 'Space Mono', monospace; font-size: 0.75rem;
-            color: var(--blue-light);
-            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-        }
-
-        .live-dot {
-            width: 7px; height: 7px; background: #00ff88;
-            border-radius: 50%; display: inline-block; margin-right: 5px;
-            animation: pulse-dot 1.5s infinite;
-        }
-
-        @keyframes pulse-dot {
-            0%,100% { opacity:1; transform:scale(1); }
-            50% { opacity:0.4; transform:scale(0.8); }
-        }
-
-        .live-stat { display: flex; align-items: center; gap: 5px; }
-        .live-stat span { color: #00ff88; font-weight: 700; }
-
-        /* TOASTS */
-        .toast-container {
-            position: fixed; bottom: 1.5rem; left: 1rem;
-            z-index: 200; display: flex; flex-direction: column;
-            gap: 0.5rem; pointer-events: none;
-        }
-
-        .toast {
-            background: rgba(5,20,45,0.92);
-            border: 1px solid rgba(59,152,255,0.4); border-radius: 12px;
-            padding: 10px 14px; color: var(--blue-pale);
-            font-size: 0.8rem; display: flex; align-items: center; gap: 10px;
-            transform: translateX(-120%); opacity: 0;
-            transition: transform 0.4s ease, opacity 0.4s ease;
-            max-width: 260px;
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-        }
-
-        .toast.show { transform: translateX(0); opacity: 1; }
-        .toast-icon { font-size: 1.1rem; }
-        .toast-text strong { color: #00ff88; }
-
         /* TRACKER PANEL */
         .tracker-panel {
             position: fixed; top: 50%; right: 1rem; transform: translateY(-50%);
@@ -135,7 +86,7 @@
         .main-content {
             position: relative; z-index: 15; flex: 1;
             display: flex; flex-direction: column; align-items: center;
-            padding: 5rem 1rem 3rem; width: 100%;
+            padding: 2rem 1rem 3rem; width: 100%;
             max-width: 1400px; margin: 0 auto;
         }
 
@@ -177,7 +128,6 @@
 
         .phone-card:active { transform: scale(0.98); transition: transform 0.1s; }
 
-        /* Número do quadrado */
         .card-number {
             position: absolute; top: 14px; left: 16px;
             font-family: 'Space Mono', monospace; font-size: 0.9rem;
@@ -220,7 +170,6 @@
             align-items: center; gap: 10px;
         }
 
-        /* Imagem da plataforma - imagens personalizadas */
         .miner-img {
             width: 88px; height: 88px; margin: 0 auto;
             border-radius: 20px; object-fit: cover;
@@ -250,13 +199,8 @@
             font-family: 'Rajdhani', sans-serif; text-transform: uppercase;
         }
 
-        .miner-sub {
-            font-size: 0.7rem; color: #9bbdf0;
-            text-transform: uppercase; letter-spacing: 2px; font-family: 'Space Mono', monospace;
-        }
-
         /* BOTÕES */
-        .btn-wrap { width: 100%; margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+        .btn-wrap { width: 100%; margin-top: 14px; }
 
         .mining-btn {
             display: inline-block; width: 100%; padding: 14px 10px;
@@ -287,65 +231,15 @@
         .mining-btn:hover::before { left: 150%; }
         .mining-btn:active { transform: scale(0.98); background: rgba(0,70,150,0.9); }
 
-        .compare-btn {
-            display: inline-block; width: 100%; padding: 8px 10px;
-            background: transparent; border: 1px solid rgba(59,152,255,0.25);
-            border-radius: 60px; color: var(--blue-light); font-size: 0.78rem;
-            text-align: center; text-decoration: none; letter-spacing: 0.5px;
-            transition: all 0.2s; cursor: default; font-family: 'Space Mono', monospace;
-        }
-
-        @media (max-width: 680px) { .compare-btn { cursor: pointer; } }
-
-        .compare-btn:hover { background: rgba(59,152,255,0.1); border-color: rgba(59,152,255,0.5); }
-
         /* RESPONSIVE */
         @media (max-width: 680px) {
-            .main-content { padding: 4.5rem 0.8rem 2rem; }
+            .main-content { padding: 1.5rem 0.8rem 2rem; }
             .phone-card { flex: 0 1 300px; max-width: 300px; }
             .miner-img { width: 72px; height: 72px; }
             .miner-name { font-size: 1.4rem; }
-            .live-bar { font-size: 0.7rem; gap: 1rem; }
         }
 
         @media (max-width: 380px) { .phone-card { min-width: 240px; } }
-
-        /* MODAL */
-        #compareModal {
-            display: none; position: fixed; inset: 0; z-index: 300;
-            align-items: center; justify-content: center;
-            background: rgba(0,5,15,0.85);
-            backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-        }
-
-        .modal-box {
-            background: rgba(5,20,50,0.97); border: 1px solid rgba(59,152,255,0.4);
-            border-radius: 24px; padding: 2rem; max-width: 340px;
-            width: 90%; position: relative;
-        }
-
-        .modal-close {
-            position: absolute; top: 12px; right: 16px;
-            background: none; border: none; color: #79c0ff;
-            font-size: 1.4rem; cursor: pointer;
-        }
-
-        .modal-title {
-            font-family: 'Space Mono', monospace; font-size: 0.65rem;
-            color: var(--blue-accent); letter-spacing: 2px;
-            text-transform: uppercase; margin-bottom: 1rem;
-        }
-
-        .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
-
-        .compare-cell {
-            background: rgba(59,152,255,0.1); border-radius: 10px;
-            padding: 0.7rem; text-align: center;
-        }
-
-        .compare-cell-label { font-size: 0.65rem; color: #9bbdf0; margin-bottom: 4px; }
-        .compare-cell-val { font-size: 1.3rem; color: #00ff88; font-weight: 700; }
-        .compare-cell-val.blue { color: #79c0ff; font-size: 1.1rem; }
     </style>
 </head>
 <body>
@@ -353,25 +247,9 @@
     <div class="bg-overlay"></div>
     <canvas id="particle-canvas"></canvas>
 
-    <div class="live-bar">
-        <div class="live-stat"><span class="live-dot"></span><span id="liveCount">—</span> acessando agora</div>
-        <div class="live-stat">💰 <span id="liveEarned">—</span> ganhos hoje</div>
-        <div class="live-stat">🔗 <span id="liveClicks">—</span> cliques hoje</div>
-    </div>
-
-    <div class="toast-container" id="toastContainer"></div>
-
     <div class="tracker-panel" id="trackerPanel">
         <div class="tracker-title">📊 Cliques</div>
         <div class="tracker-list" id="trackerList"></div>
-    </div>
-
-    <div id="compareModal">
-        <div class="modal-box">
-            <button class="modal-close" onclick="document.getElementById('compareModal').style.display='none'">✕</button>
-            <div class="modal-title">📊 Comparativo de Ganhos</div>
-            <div id="compareContent"></div>
-        </div>
     </div>
 
     <div class="main-content">
@@ -382,7 +260,6 @@
 
         <div class="mining-grid">
 
-            <!-- Earnably -->
             <div class="phone-card">
                 <span class="card-number">1</span>
                 <div class="phone-mock">
@@ -390,16 +267,13 @@
                     <div class="phone-screen">
                         <img class="miner-img" loading="lazy" decoding="async" src="https://img.icons8.com/?size=100&id=11187&format=png&color=3b98ff" alt="Earnably">
                         <div class="miner-name">Earnably</div>
-                        <div class="miner-sub">pesquisas e ofertas</div>
                     </div>
                 </div>
                 <div class="btn-wrap">
                     <a href="https://earnably.com/join/1957789" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar Earnably" onclick="trackClick('Earnably')">▶ acessar</a>
-                    <span class="compare-btn" onclick="showCompare('Earnably','8.5%','USD','Média')">📊 comparar ganhos</span>
                 </div>
             </div>
 
-            <!-- TeraBox -->
             <div class="phone-card">
                 <span class="card-number">2</span>
                 <div class="phone-mock">
@@ -407,16 +281,13 @@
                     <div class="phone-screen">
                         <img class="miner-img" loading="lazy" decoding="async" src="https://img.icons8.com/?size=100&id=11683&format=png&color=3b98ff" alt="TeraBox">
                         <div class="miner-name">TeraBox</div>
-                        <div class="miner-sub">armazenamento em nuvem</div>
                     </div>
                 </div>
                 <div class="btn-wrap">
                     <a href="https://www.terabox.com/portuguese/webmaster?referer_uk=4401664863395" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar TeraBox" onclick="trackClick('TeraBox')">▶ acessar</a>
-                    <span class="compare-btn" onclick="showCompare('TeraBox','7.2%','USD','Baixa')">📊 comparar ganhos</span>
                 </div>
             </div>
 
-            <!-- Encurta.net -->
             <div class="phone-card">
                 <span class="card-number">3</span>
                 <div class="phone-mock">
@@ -424,16 +295,13 @@
                     <div class="phone-screen">
                         <img class="miner-img" loading="lazy" decoding="async" src="https://img.icons8.com/?size=100&id=82749&format=png&color=3b98ff" alt="Encurta.net">
                         <div class="miner-name">Encurta.net</div>
-                        <div class="miner-sub">encurtador de links</div>
                     </div>
                 </div>
                 <div class="btn-wrap">
                     <a href="https://encurta.net/ref/lucianosantos7191" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar Encurta.net" onclick="trackClick('Encurta.net')">▶ acessar</a>
-                    <span class="compare-btn" onclick="showCompare('Encurta.net','6.8%','USD','Média')">📊 comparar ganhos</span>
                 </div>
             </div>
 
-            <!-- Honeygain -->
             <div class="phone-card">
                 <span class="card-number">4</span>
                 <div class="phone-mock">
@@ -441,16 +309,13 @@
                     <div class="phone-screen">
                         <img class="miner-img" loading="lazy" decoding="async" src="https://img.icons8.com/?size=100&id=87222&format=png&color=3b98ff" alt="Honeygain">
                         <div class="miner-name">Honeygain</div>
-                        <div class="miner-sub">compartilhe internet</div>
                     </div>
                 </div>
                 <div class="btn-wrap">
                     <a href="https://join.honeygain.com/LDPSP008F5" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar Honeygain" onclick="trackClick('Honeygain')">▶ acessar</a>
-                    <span class="compare-btn" onclick="showCompare('Honeygain','9.1%','USD','Alta')">📊 comparar ganhos</span>
                 </div>
             </div>
 
-            <!-- Timebucks -->
             <div class="phone-card">
                 <span class="card-number">5</span>
                 <div class="phone-mock">
@@ -458,16 +323,13 @@
                     <div class="phone-screen">
                         <img class="miner-img" loading="lazy" decoding="async" src="https://img.icons8.com/?size=100&id=11113&format=png&color=3b98ff" alt="Timebucks">
                         <div class="miner-name">Timebucks</div>
-                        <div class="miner-sub">tarefas e vídeos</div>
                     </div>
                 </div>
                 <div class="btn-wrap">
                     <a href="https://timebucks.com/?refID=219263145" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar Timebucks" onclick="trackClick('Timebucks')">▶ acessar</a>
-                    <span class="compare-btn" onclick="showCompare('Timebucks','7.5%','USD','Média')">📊 comparar ganhos</span>
                 </div>
             </div>
 
-            <!-- PrizeRebel -->
             <div class="phone-card">
                 <span class="card-number">6</span>
                 <div class="phone-mock">
@@ -475,12 +337,10 @@
                     <div class="phone-screen">
                         <img class="miner-img" loading="lazy" decoding="async" src="https://img.icons8.com/?size=100&id=9730&format=png&color=3b98ff" alt="PrizeRebel">
                         <div class="miner-name">PrizeRebel</div>
-                        <div class="miner-sub">pesquisas pagas</div>
                     </div>
                 </div>
                 <div class="btn-wrap">
                     <a href="https://www.prizerebel.com/index.php?r=14117164" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar PrizeRebel" onclick="trackClick('PrizeRebel')">▶ acessar</a>
-                    <span class="compare-btn" onclick="showCompare('PrizeRebel','8.2%','USD','Alta')">📊 comparar ganhos</span>
                 </div>
             </div>
 
@@ -510,14 +370,10 @@
 
         // ===== CLICK TRACKER =====
         const clickData = {};
-        var liveBaseClicks = 423 + Math.floor(Math.random()*100);
 
         window.trackClick = function(name){
             clickData[name]=(clickData[name]||0)+1;
             updateTrackerPanel();
-            const total=Object.values(clickData).reduce((a,b)=>a+b,0);
-            const lc=document.getElementById('liveClicks');
-            if(lc) lc.textContent=liveBaseClicks+total;
         };
 
         function updateTrackerPanel(){
@@ -526,68 +382,6 @@
             list.innerHTML=Object.entries(clickData).sort((a,b)=>b[1]-a[1]).slice(0,8)
                 .map(([n,c])=>`<div class="tracker-item"><span>${n}</span><span class="tracker-count">${c}</span></div>`).join('');
         }
-
-        // ===== MODAL COMPARAR =====
-        window.showCompare = function(name,rate,coin,volatility){
-            const daily=(parseFloat(rate)/365).toFixed(3);
-            const monthly=(parseFloat(rate)/12).toFixed(2);
-            const vc=volatility==='Alta'?'#ff9966':volatility==='Média'?'#ffcc44':'#44cc88';
-            document.getElementById('compareContent').innerHTML=`
-                <div style="margin-bottom:1rem;font-size:1.2rem;font-weight:700;font-family:'Rajdhani',sans-serif;color:white;text-transform:uppercase;">${name}</div>
-                <div class="compare-grid">
-                    <div class="compare-cell"><div class="compare-cell-label">ANUAL</div><div class="compare-cell-val">${rate}</div></div>
-                    <div class="compare-cell"><div class="compare-cell-label">AO MÊS</div><div class="compare-cell-val">${monthly}%</div></div>
-                    <div class="compare-cell"><div class="compare-cell-label">AO DIA</div><div class="compare-cell-val blue">${daily}%</div></div>
-                    <div class="compare-cell"><div class="compare-cell-label">MOEDA</div><div class="compare-cell-val blue">${coin}</div></div>
-                </div>
-                <div style="margin-top:.8rem;font-size:.75rem;color:#9bbdf0;">Volatilidade: <span style="color:${vc};font-weight:700;">${volatility}</span></div>
-                <div style="margin-top:.4rem;font-size:.68rem;color:rgba(155,189,240,0.5);">* Valores estimados. Rendimentos variáveis.</div>`;
-            document.getElementById('compareModal').style.display='flex';
-        };
-        document.getElementById('compareModal').addEventListener('click',function(e){ if(e.target===this) this.style.display='none'; });
-
-        // ===== LIVE BAR =====
-        const liveCountEl=document.getElementById('liveCount');
-        const liveEarnedEl=document.getElementById('liveEarned');
-        const liveClicksEl=document.getElementById('liveClicks');
-        let liveCount=127 + Math.floor(Math.random()*80);
-        let liveEarned=2150 + Math.floor(Math.random()*400);
-
-        function updateLiveBar(){
-            liveCount+=Math.floor(Math.random()*3)-1;
-            liveCount=Math.max(80,liveCount);
-            if(Math.random()>0.6) liveEarned+=Math.floor(Math.random()*5);
-            if(liveCountEl) liveCountEl.textContent=liveCount;
-            if(liveEarnedEl) liveEarnedEl.textContent=liveEarned.toFixed(1);
-            const t=Object.values(clickData).reduce((a,b)=>a+b,0);
-            if(liveClicksEl) liveClicksEl.textContent=liveBaseClicks+t;
-        }
-        setInterval(updateLiveBar,5000); updateLiveBar();
-
-        // ===== TOASTS =====
-        const names=['Carlos','Maria','João','Ana','Pedro','Luisa','Rafael','Beatriz','Lucas','Fernanda','Diego','Juliana'];
-        const mlist=['Earnably','TeraBox','Encurta.net','Honeygain','Timebucks','PrizeRebel'];
-        const acts=[
-            (n,m)=>`<strong>${n}</strong> ganhou R$ ${(Math.random()*30+5).toFixed(2)} no ${m}`,
-            (n,m)=>`<strong>${n}</strong> começou a usar ${m}`,
-            (n,m)=>`<strong>${n}</strong> indicou um amigo no ${m}`,
-            (n,m)=>`<strong>${n}</strong> recebeu bônus no ${m}`,
-        ];
-        const tc=document.getElementById('toastContainer');
-
-        function showToast(){
-            const n=names[Math.floor(Math.random()*names.length)];
-            const m=mlist[Math.floor(Math.random()*mlist.length)];
-            const a=acts[Math.floor(Math.random()*acts.length)];
-            const t=document.createElement('div');
-            t.className='toast';
-            t.innerHTML=`<span class="toast-icon">💰</span><span class="toast-text">${a(n,m)}</span>`;
-            tc.appendChild(t);
-            requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show')));
-            setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=>t.remove(),450); },4000);
-            while(tc.children.length>2) tc.removeChild(tc.firstChild);
-        }
-        setTimeout(showToast,2000); setInterval(showToast,7000);
 
         // ===== PARTÍCULAS DE FUNDO =====
         const canvas=document.getElementById('particle-canvas');
@@ -647,7 +441,7 @@
         window.addEventListener('resize',resizeC);
         resizeC();animate();
 
-        // ===== TRAIL SIMPLES: CAUDA LEVE + PARTÍCULAS QUE SOMEM =====
+        // ===== TRAIL: PARTÍCULAS QUE SOMEM =====
         const tCanvas=document.createElement('canvas');
         tCanvas.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;';
         document.body.appendChild(tCanvas);
@@ -656,7 +450,6 @@
         function resizeT(){ tCanvas.width=window.innerWidth;tCanvas.height=window.innerHeight; }
         window.addEventListener('resize',resizeT);resizeT();
 
-        // Partículas que somem
         const dots=[];
         let lastMx=0,lastMy=0;
 
@@ -677,8 +470,6 @@
 
         function trailLoop(){
             tCtx.clearRect(0,0,tCanvas.width,tCanvas.height);
-
-            // Atualiza e desenha partículas
             for(let i=dots.length-1;i>=0;i--){
                 const d=dots[i];
                 d.x+=d.vx; d.y+=d.vy;
@@ -695,19 +486,16 @@
         }
         trailLoop();
 
-        // Mouse: spawna dots ao mover
         document.addEventListener('mousemove',(e)=>{
             const dist=Math.hypot(e.clientX-lastMx,e.clientY-lastMy);
             if(dist<1) return;
             lastMx=e.clientX;lastMy=e.clientY;
             spawnDots(e.clientX,e.clientY);
-            // Influência nas partículas de fundo
             for(let p of particles){
                 if(Math.random()>.97){ p.vx+=dist*.0008; p.vy+=dist*.0004; }
             }
         });
 
-        // Touch
         document.addEventListener('touchmove',(e)=>{
             if(!e.touches[0]) return;
             const tx=e.touches[0].clientX,ty=e.touches[0].clientY;
