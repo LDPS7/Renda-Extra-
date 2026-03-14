@@ -52,7 +52,6 @@
             z-index: 1;
         }
 
-        /* TRACKER PANEL */
         .tracker-panel {
             position: fixed; top: 50%; right: 1rem; transform: translateY(-50%);
             z-index: 100; background: rgba(5,15,35,0.9);
@@ -82,7 +81,6 @@
             font-family: 'Space Mono', monospace;
         }
 
-        /* MAIN */
         .main-content {
             position: relative; z-index: 15; flex: 1;
             display: flex; flex-direction: column; align-items: center;
@@ -110,7 +108,6 @@
             text-shadow: 0 0 5px rgba(255,255,255,0.3);
         }
 
-        /* GRID */
         .mining-grid {
             display: flex; flex-wrap: wrap; justify-content: center;
             gap: 1.8rem 1.2rem; width: 100%;
@@ -199,7 +196,6 @@
             font-family: 'Rajdhani', sans-serif; text-transform: uppercase;
         }
 
-        /* BOTÕES */
         .btn-wrap { width: 100%; margin-top: 14px; }
 
         .mining-btn {
@@ -231,7 +227,6 @@
         .mining-btn:hover::before { left: 150%; }
         .mining-btn:active { transform: scale(0.98); background: rgba(0,70,150,0.9); }
 
-        /* RESPONSIVE */
         @media (max-width: 680px) {
             .main-content { padding: 1.5rem 0.8rem 2rem; }
             .phone-card { flex: 0 1 300px; max-width: 300px; }
@@ -344,13 +339,27 @@
                 </div>
             </div>
 
+            <!-- NOVO: card 7 - Cashzo -->
+            <div class="phone-card">
+                <span class="card-number">7</span>
+                <div class="phone-mock">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <img class="miner-img" loading="lazy" decoding="async" src="https://cashzo.fun/favicon.ico" onerror="this.src='https://img.icons8.com/?size=100&id=11187&format=png&color=3b98ff'" alt="Cashzo">
+                        <div class="miner-name">Cashzo</div>
+                    </div>
+                </div>
+                <div class="btn-wrap">
+                    <a href="https://cashzo.fun/auth?ref=22C38FC8" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar Cashzo" onclick="trackClick('Cashzo')">▶ acessar</a>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script>
     (function () {
 
-        // ===== PWA INLINE =====
         try {
             const mBlob = new Blob([JSON.stringify({
                 name:"RENDA EXTRA",short_name:"RENDAEXTRA",start_url:"/",display:"standalone",
@@ -368,7 +377,6 @@
             }catch(e){}
         }
 
-        // ===== CLICK TRACKER =====
         const clickData = {};
 
         window.trackClick = function(name){
@@ -383,7 +391,6 @@
                 .map(([n,c])=>`<div class="tracker-item"><span>${n}</span><span class="tracker-count">${c}</span></div>`).join('');
         }
 
-        // ===== PARTÍCULAS DE FUNDO =====
         const canvas=document.getElementById('particle-canvas');
         const ctx=canvas.getContext('2d');
         let W,H,particles=[],animId;
@@ -441,7 +448,6 @@
         window.addEventListener('resize',resizeC);
         resizeC();animate();
 
-        // ===== TRAIL: PARTÍCULAS QUE SOMEM =====
         const tCanvas=document.createElement('canvas');
         tCanvas.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;';
         document.body.appendChild(tCanvas);
