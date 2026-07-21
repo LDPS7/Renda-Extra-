@@ -196,7 +196,29 @@
             font-family: 'Rajdhani', sans-serif; text-transform: uppercase;
         }
 
-        .btn-wrap { width: 100%; margin-top: 14px; }
+        /* Caixa de descrição adicionada */
+        .miner-desc-box {
+            width: 100%;
+            margin: 10px 0 6px 0;
+            padding: 8px 12px;
+            background: rgba(0, 20, 50, 0.5);
+            border-left: 2px solid var(--blue-accent);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.78rem;
+            color: rgba(200, 225, 255, 0.85);
+            line-height: 1.3;
+            font-weight: 400;
+            letter-spacing: 0.2px;
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .btn-wrap { width: 100%; margin-top: 4px; }
 
         .mining-btn {
             display: inline-block; width: 100%; padding: 14px 10px;
@@ -232,6 +254,7 @@
             .phone-card { flex: 0 1 300px; max-width: 300px; }
             .miner-img { width: 72px; height: 72px; }
             .miner-name { font-size: 1.4rem; }
+            .miner-desc-box { font-size: 0.7rem; min-height: 34px; padding: 6px 10px; }
         }
 
         @media (max-width: 380px) { .phone-card { min-width: 240px; } }
@@ -264,6 +287,7 @@
                         <div class="miner-name">Earnably</div>
                     </div>
                 </div>
+                <div class="miner-desc-box">Ganhe dinheiro respondendo pesquisas, completando tarefas e indicando amigos.</div>
                 <div class="btn-wrap">
                     <a href="https://earnably.com/join/1957789" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar Earnably" onclick="trackClick('Earnably')">▶ acessar</a>
                 </div>
@@ -278,6 +302,7 @@
                         <div class="miner-name">TeraBox</div>
                     </div>
                 </div>
+                <div class="miner-desc-box">Armazenamento em nuvem que paga por compartilhar arquivos e indicar novos usuários.</div>
                 <div class="btn-wrap">
                     <a href="https://www.terabox.com/portuguese/webmaster?referer_uk=4401664863395" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar TeraBox" onclick="trackClick('TeraBox')">▶ acessar</a>
                 </div>
@@ -292,6 +317,7 @@
                         <div class="miner-name">Encurta.net</div>
                     </div>
                 </div>
+                <div class="miner-desc-box">Maior encurtador de links do Brasil, monetize conteúdos e receba via PIX.</div>
                 <div class="btn-wrap">
                     <a href="https://encurta.net/ref/lucianosantos7191" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar Encurta.net" onclick="trackClick('Encurta.net')">▶ acessar</a>
                 </div>
@@ -306,6 +332,7 @@
                         <div class="miner-name">Honeygain</div>
                     </div>
                 </div>
+                <div class="miner-desc-box">Renda passiva automática: ganhe compartilhando sua conexão de internet não usada.</div>
                 <div class="btn-wrap">
                     <a href="https://join.honeygain.com/LDPSP008F5" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar Honeygain" onclick="trackClick('Honeygain')">▶ acessar</a>
                 </div>
@@ -320,6 +347,7 @@
                         <div class="miner-name">Timebucks</div>
                     </div>
                 </div>
+                <div class="miner-desc-box">Plataforma internacional com várias formas de ganhar: pesquisas, cliques, tarefas e mais.</div>
                 <div class="btn-wrap">
                     <a href="https://timebucks.com/?refID=219263145" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar Timebucks" onclick="trackClick('Timebucks')">▶ acessar</a>
                 </div>
@@ -334,6 +362,7 @@
                         <div class="miner-name">PrizeRebel</div>
                     </div>
                 </div>
+                <div class="miner-desc-box">Uma das mais antigas e confiáveis, ganhe pontos trocáveis por dinheiro e vales-presente.</div>
                 <div class="btn-wrap">
                     <a href="https://www.prizerebel.com/index.php?r=14117164" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar PrizeRebel" onclick="trackClick('PrizeRebel')">▶ acessar</a>
                 </div>
@@ -348,6 +377,7 @@
                         <div class="miner-name">Cashzo</div>
                     </div>
                 </div>
+                <div class="miner-desc-box">Ganhe recompensas diárias realizando tarefas simples e atividades rápidas na plataforma.</div>
                 <div class="btn-wrap">
                     <a href="https://cashzo.fun/auth?ref=22C38FC8" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar Cashzo" onclick="trackClick('Cashzo')">▶ acessar</a>
                 </div>
@@ -358,10 +388,11 @@
                 <div class="phone-mock">
                     <div class="phone-notch"></div>
                     <div class="phone-screen">
-                        <img class="miner-img" loading="lazy" decoding="async" src="https://viralizesociais.com/favicon.ico" onerror="this.src='https://img.icons8.com/?size=100&id=11113&format=png&color=3b98ff'" alt="Viralize Sociais">
+                        <img class="miner-img" loading="lazy" decoding="async" src="https://viralizesociais.com/favicon.ico" onerror="this.src='https://img.icons8.com/?size=100&id=11113&format=png&color=3b98ff'" alt="V="Viralize Sociais">
                         <div class="miner-name">Viralize</div>
                     </div>
                 </div>
+                <div class="miner-desc-box">Ganhe dinheiro seguindo perfis, curtindo e interagindo com publicações no TikTok e redes sociais.</div>
                 <div class="btn-wrap">
                     <a href="https://viralizesociais.com/register?ref=AOKQRNHG" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar Viralize Sociais" onclick="trackClick('Viralize Sociais')">▶ acessar</a>
                 </div>
@@ -376,6 +407,7 @@
                         <div class="miner-name">PR.Social</div>
                     </div>
                 </div>
+                <div class="miner-desc-box">Ganhe recompensas por interagir com conteúdos, seguir contas e participar de campanhas.</div>
                 <div class="btn-wrap">
                     <a href="https://pr.social/?ref=602fc5ab" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar PR.Social" onclick="trackClick('PR.Social')">▶ acessar</a>
                 </div>
@@ -390,6 +422,7 @@
                         <div class="miner-name">MonetizeRedes</div>
                     </div>
                 </div>
+                <div class="miner-desc-box">Ganhe curtindo e seguindo perfis, receba valores diretamente após a validação das tarefas.</div>
                 <div class="btn-wrap">
                     <a href="https://monetizeredes.com/?ref=C2D63257" class="mining-btn" target="_blank" rel="noopener" aria-label="Acessar MonetizeRedes" onclick="trackClick('MonetizeRedes')">▶ acessar</a>
                 </div>
@@ -404,6 +437,7 @@
                         <div class="miner-name">LevelRush</div>
                     </div>
                 </div>
+                <div class="miner-desc-box">Aplicativo para ganhar recompensas cumprindo missões, subindo de nível e indicando amigos.</div>
                 <div class="btn-wrap">
                     <a href="https://levelrush.s3.ap-southeast-1.amazonaws.com/app/LevelRush.apk" class="mining-btn" target="_blank" rel="noopener" aria-label="Baixar LevelRush" onclick="trackClick('LevelRush')">▶ acessar</a>
                 </div>
